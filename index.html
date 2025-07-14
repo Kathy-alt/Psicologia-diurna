@@ -18,10 +18,24 @@
     }
 
     #malla-container {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
+      display: flex;
       gap: 10px;
+      overflow-x: auto;
       margin-top: 30px;
+    }
+
+    .semestre {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 150px;
+    }
+
+    .semestre h2 {
+      text-align: center;
+      font-size: 16px;
+      color: #c71585;
+      margin-bottom: 5px;
     }
 
     .ramo {
@@ -34,8 +48,6 @@
       user-select: none;
       transition: 0.2s;
       font-size: 14px;
-      word-wrap: break-word;
-      white-space: normal;
     }
 
     .ramo.locked {
@@ -114,12 +126,10 @@
       div.classList.add("ramo");
       div.innerText = ramo.nombre;
       div.dataset.id = ramo.id;
-      div.dataset.semestre = ramo.semestre;
       if (ramo.requisitos) {
         div.dataset.requisitos = JSON.stringify(ramo.requisitos);
         div.classList.add("locked");
       }
-      div.style.gridColumnStart = ramo.semestre;
       div.addEventListener("click", () => toggleAprobado(ramo.id));
       return div;
     }
@@ -127,11 +137,19 @@
     function renderMalla() {
       mallaContainer.innerHTML = "";
       for (let semestre = 1; semestre <= 10; semestre++) {
-        const semestreRamos = ramos.filter(r => r.semestre === semestre);
-        semestreRamos.forEach(ramo => {
-          const div = crearRamo(ramo);
-          mallaContainer.appendChild(div);
+        const columna = document.createElement("div");
+        columna.classList.add("semestre");
+        const titulo = document.createElement("h2");
+        titulo.innerText = `Semestre ${semestre}`;
+        columna.appendChild(titulo);
+
+        const ramosDelSemestre = ramos.filter(r => r.semestre === semestre);
+        ramosDelSemestre.forEach(ramo => {
+          const ramoDiv = crearRamo(ramo);
+          columna.appendChild(ramoDiv);
         });
+
+        mallaContainer.appendChild(columna);
       }
     }
 
@@ -166,3 +184,4 @@
   </script>
 </body>
 </html>
+
